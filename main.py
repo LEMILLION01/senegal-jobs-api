@@ -12,15 +12,18 @@ def home():
 def get_jobs():
     jobs = []
     try:
-        url = "https://www.emploi.sn/offres-emploi"
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        response = requests.get(url, headers=headers, timeout=10)
+        url = "https://www.rekrute.com/offres-emploi-senegal.html"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/91.0.4472.124 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml",
+            "Accept-Language": "fr-FR,fr;q=0.9"
+        }
+        response = requests.get(url, headers=headers, timeout=15)
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Debug - retourne le HTML brut pour voir la structure
         return jsonify({
             "status": "OK",
-            "html_sample": str(soup)[:2000]
+            "html_sample": str(soup)[:3000]
         })
         
     except Exception as e:
