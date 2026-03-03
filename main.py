@@ -12,10 +12,11 @@ def home():
 def get_jobs():
     jobs = []
     try:
-        url = "https://sn.indeed.com/rss?q=emploi&l=S%C3%A9n%C3%A9gal"
-        headers = {"User-Agent": "Mozilla/5.0"}
+        url = "https://fr.indeed.com/rss?q=senegal&l=&sort=date"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
         response = requests.get(url, headers=headers, timeout=15)
-        
         root = ET.fromstring(response.content)
         channel = root.find('channel')
         
