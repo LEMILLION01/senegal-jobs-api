@@ -10,7 +10,7 @@ def home():
 @app.route('/jobs')
 def get_jobs():
     try:
-        url = "https://remotive.com/api/remote-jobs?search=africa&limit=20"
+        url = "https://remotive.com/api/remote-jobs?limit=20"
         response = requests.get(url, timeout=15)
         data = response.json()
         
