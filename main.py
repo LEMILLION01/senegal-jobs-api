@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 import requests
-from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 
 app = Flask(__name__)
 
@@ -12,22 +12,32 @@ def home():
 def get_jobs():
     jobs = []
     try:
-        url = "https://www.rekrute.com/offres-emploi-senegal.html"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/91.0.4472.124 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml",
-            "Accept-Language": "fr-FR,fr;q=0.9"
-        }
+        url = "https://sn.indeed.com/rss?q=emploi&l=S%C3%A9n%C3%A9gal"
+        headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(url, headers=headers, timeout=15)
-        soup = BeautifulSoup(response.text, 'html.parser')
         
-        return jsonify({
-            "status": "OK",
-            "html_sample": str(soup)[:3000]
-        })
+        root = ET.fromstring(response.content)
+        channel = root.find('channel')
         
+        for item in channel.findall('item'):
+            title = item.find('title')
+            link = item.find('link')
+            description = item.find('description')
+            pubdate = item.find('pubDate')
+            
+            jobs.append({
+                "job_title": title.text if title is not None else "N/A",
+                "job_apply_link": link.text if link is not None else "#",
+                "job_description": description.text if description is not None else "N/A",
+                "job_posted_at": pubdate.text if pubdate is not None else "N/A",
+                "job_location": "Sénégal",
+                "employer_name": "N/A"
+            })
+            
     except Exception as e:
         return jsonify({"error": str(e), "status": "FAILED"})
+    
+    return jsonify({"data": jobs, "status": "OK"})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
